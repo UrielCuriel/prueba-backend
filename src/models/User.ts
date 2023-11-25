@@ -5,26 +5,40 @@ import {
   OneToMany,
   CreateDateColumn,
   UpdateDateColumn,
+  BeforeInsert,
+  BeforeUpdate,
 } from "typeorm";
+import { Exclude } from "class-transformer";
+import { IsString, IsNotEmpty } from "class-validator";
 import { Post } from "./Post";
 import { Comment } from "./Comment";
 
+import * as bcrypt from "bcrypt";
+import { Model } from "./base";
+
 @Entity()
-export class User {
+export class User extends Model<User> {
   @PrimaryGeneratedColumn()
   id!: number;
 
   @Column({
     unique: true,
   })
+  @IsString()
+  @IsNotEmpty()
   username!: string;
 
   @Column({
     unique: true,
   })
+  @IsString()
+  @IsNotEmpty()
   email!: string;
 
-  @Column()
+  @Exclude()
+  @Column({
+    select: false,
+  })
   password!: string;
 
   @CreateDateColumn()
@@ -38,4 +52,12 @@ export class User {
 
   @OneToMany(() => Comment, (comment) => comment.user)
   comments!: Comment[];
+
+  @BeforeInsert()
+  @BeforeUpdate()
+  async hashPassword() {
+    const salt = await bcrypt.genSalt(10);
+    const hash = await bcrypt.hash(this.password, salt);
+    this.password = hash;
+  }
 }
