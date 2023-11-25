@@ -1,0 +1,54 @@
+version: "3"
+services:
+  web:
+    build: .
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+      - "4000:4000"
+    environment:
+      PORT: 4000
+    networks:
+      - app-network
+    depends_on:
+      db:
+        condition: service_healthy
+  db:
+    image: mysql:latest
+    volumes:
+      - data-db:/var/lib/mysql
+    restart: always
+    ports:
+      - "33060:33060"
+      - "3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app-network
+    environment:
+      MYSQL_ROOT_PASSWORD: pass
+      MYSQL_DATABASE: test
+      MYSQL_USER: user
+      MYSQL_PASSWORD: pass
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+    ports:
+      - "4001:80"
+    depends_on:
+      - db
+    networks:
+      - app-network
+
+volumes:
+  data-db:
+
+networks:
+  app-network:
+    driver: bridge
