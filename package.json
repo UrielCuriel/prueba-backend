@@ -17,6 +17,7 @@
   "dependencies": {
     "@types/jest": "^29.5.10",
     "apollo-server-express": "^3.13.0",
+    "dotenv": "^16.3.1",
     "graphql": "^16.8.1",
     "jest": "^29.7.0",
     "jsonwebtoken": "^9.0.2",
