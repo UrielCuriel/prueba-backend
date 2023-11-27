@@ -24,7 +24,7 @@ export class AuthService {
   }
 
   private generateToken(user: User): string {
-    return jwt.sign({ id: user.id }, jwtConfig.secret, {
+    return jwt.sign({ id: user.id, user }, jwtConfig.secret, {
       expiresIn: jwtConfig.expiresIn,
     });
   }
