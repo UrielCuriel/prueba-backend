@@ -1,17 +1,20 @@
 import Sinon from "sinon";
 import { Repository } from "typeorm";
-import { Post, AppDataSource } from "../models";
+import { Post, AppDataSource, User } from "../models";
 import { PostService } from "./post.service";
+import { faker } from "@faker-js/faker";
 
 describe("PostService", () => {
   let service: PostService;
   let postRepository: any;
+  let userRepository: any;
 
   beforeEach(() => {
     postRepository = Sinon.createStubInstance<Repository<Post>>(Repository);
-    Sinon.stub(AppDataSource, "getRepository")
-      .withArgs(Post)
-      .returns(postRepository);
+    userRepository = Sinon.createStubInstance<Repository<User>>(Repository);
+    const stubGetRepository = Sinon.stub(AppDataSource, "getRepository");
+    stubGetRepository.withArgs(Post).returns(postRepository);
+    stubGetRepository.withArgs(User).returns(userRepository);
 
     service = new PostService();
   });
@@ -24,16 +27,16 @@ describe("PostService", () => {
     it("should return all posts", async () => {
       const posts = [
         {
-          id: 1,
-          title: "Post 1",
-          slug: "post-1",
-          content: "Content 1",
+          id: faker.number.int({ min: 1, max: 100 }),
+          title: faker.lorem.sentence(),
+          slug: faker.lorem.slug(),
+          content: faker.lorem.paragraph(),
         },
         {
-          id: 2,
-          title: "Post 2",
-          slug: "post-2",
-          content: "Content 2",
+          id: faker.number.int({ min: 1, max: 100 }),
+          title: faker.lorem.sentence(),
+          slug: faker.lorem.slug(),
+          content: faker.lorem.paragraph(),
         },
       ];
 
@@ -47,10 +50,10 @@ describe("PostService", () => {
   describe("getOneBySlug", () => {
     it("should return a post by slug", async () => {
       const post = {
-        id: 1,
-        title: "Post 1",
-        slug: "post-1",
-        content: "Content 1",
+        id: faker.number.int({ min: 1, max: 100 }),
+        title: faker.lorem.sentence(),
+        slug: faker.lorem.slug(),
+        content: faker.lorem.paragraph(),
       };
 
       postRepository.findOneBy.resolves(post);
@@ -63,15 +66,25 @@ describe("PostService", () => {
   describe("create", () => {
     it("should create a post", async () => {
       const post = {
-        id: 1,
-        title: "Post 1",
-        slug: "post-1",
-        content: "Content 1",
+        id: faker.number.int({ min: 1, max: 100 }),
+        title: faker.lorem.sentence(),
+        slug: faker.lorem.slug(),
+        content: faker.lorem.paragraph(),
       };
+
+      const user = {
+        id: faker.number.int({ min: 1, max: 100 }),
+        username: faker.internet.userName(),
+        email: faker.internet.email(),
+      };
+
+      const userId = user.id;
 
       postRepository.save.resolves(post);
 
-      const result = await service.create(post);
+      userRepository.findOneBy.resolves(user);
+
+      const result = await service.create(post, userId);
       expect(result).toEqual(post);
     });
   });
