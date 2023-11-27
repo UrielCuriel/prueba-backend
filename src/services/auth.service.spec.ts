@@ -15,7 +15,7 @@ describe("AuthService", () => {
   beforeEach(() => {
     where = Sinon.stub().callsArg(0);
     addSelect = Sinon.stub();
-    addSelect.withArgs("password").returns({ where });
+    addSelect.withArgs("user.password").returns({ where });
     createQueryBuilder = Sinon.stub().callsArg(0);
     createQueryBuilder.withArgs("user").returns({ addSelect });
     userRepository = Sinon.createStubInstance<Repository<User>>(Repository);

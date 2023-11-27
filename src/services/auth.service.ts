@@ -35,12 +35,16 @@ export class AuthService {
     if (!decoded) {
       throw new Error("Invalid token");
     }
-    const user = await this.userRepository.findOneBy({
-      id: Number(decoded.id),
-    });
-    if (!user) {
+    try {
+      const user = await this.userRepository.findOneBy({
+        id: Number(decoded.id),
+      });
+      if (!user) {
+        throw new Error("User not found");
+      }
+      return user;
+    } catch (error) {
       throw new Error("User not found");
     }
-    return user;
   }
 }
