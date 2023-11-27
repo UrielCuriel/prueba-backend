@@ -6,6 +6,7 @@ import { AppDataSource, User } from "./models";
 import { UserRouter } from "./routes/user.router";
 import { serverConfig } from "./utils/config";
 import { DeepPartial } from "typeorm";
+import {AuthRouter} from "./routes/auth.router";
 
 const app = express();
 
@@ -36,6 +37,7 @@ app.use(
 
 //routes
 new UserRouter(app);
+new AuthRouter(app);
 
 //datasource connection
 AppDataSource.connect()

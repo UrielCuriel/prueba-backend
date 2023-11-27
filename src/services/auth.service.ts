@@ -12,12 +12,13 @@ export class AuthService {
   async login(email: string, password: string): Promise<{ token: string }> {
     const user = await this.userRepository
       .createQueryBuilder("user")
-      .addSelect("password")
+      .addSelect("user.password")
       .where("user.email = :email", { email })
       .getOne();
 
     if (user && bcrypt.compareSync(password, user.password)) {
-      const token = this.generateToken(user);
+      const { password, ...data } = user;
+      const token = this.generateToken(data as User);
       return { token };
     }
     throw new Error("Invalid email or password");

@@ -8,7 +8,6 @@ import {
   BeforeInsert,
   BeforeUpdate,
 } from "typeorm";
-import { Exclude } from "class-transformer";
 import { IsString, IsNotEmpty } from "class-validator";
 import { Post } from "./Post";
 import { Comment } from "./Comment";
@@ -35,16 +34,19 @@ export class User extends Model<User> {
   @IsNotEmpty()
   email!: string;
 
-  @Exclude()
   @Column({
     select: false,
   })
   password!: string;
 
-  @CreateDateColumn()
+  @CreateDateColumn({
+    select: false,
+  })
   createdAt!: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({
+    select: false,
+  })
   updatedAt!: Date;
 
   @OneToMany(() => Post, (post) => post.user)
