@@ -11,7 +11,7 @@ export const dbConfig = {
 };
 
 export const jwtConfig = {
-  secret: process.env.JWT_SECRET,
+  secret: process.env.JWT_SECRET ?? "",
   expiresIn: process.env.JWT_EXPIRES_IN,
 };
 
