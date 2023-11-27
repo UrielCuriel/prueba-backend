@@ -173,4 +173,62 @@ describe("UserService", () => {
       });
     });
   });
+
+  describe("update", () => {
+    it("should update a user", async () => {
+      const userData = {
+        username: faker.internet.userName(),
+        email: faker.internet.email(),
+      };
+
+      userRepository.findOne.returns(userData);
+      userRepository.save.returns(userData);
+
+      const result = await service.update(1, userData);
+      expect(result).toEqual(userData);
+      sinon.assert.calledWith(userRepository.findOne, { where: { id: 1 } });
+      sinon.assert.calledWith(userRepository.save, userData);
+    });
+    it("should throw an error if user does not exist", async () => {
+      const userData = {
+        username: faker.internet.userName(),
+        email: faker.internet.email(),
+      };
+
+      userRepository.findOne.returns(undefined);
+
+      await expect(service.update(1, userData)).rejects.toThrow(
+        "User not found"
+      );
+      sinon.assert.calledWith(userRepository.findOne, { where: { id: 1 } });
+    });
+  });
+
+  describe("delete", () => {
+    it("should delete a user", async () => {
+      const userData = {
+        username: faker.internet.userName(),
+        email: faker.internet.email(),
+      };
+
+      userRepository.findOne.returns(userData);
+      userRepository.remove.returns(userData);
+
+      const result = await service.delete(1);
+      expect(result).toEqual(userData);
+      sinon.assert.calledWith(userRepository.findOne, { where: { id: 1 } });
+      sinon.assert.calledWith(userRepository.remove, userData);
+    });
+    it("should throw an error if user does not exist", async () => {
+      const userData = {
+        username: faker.internet.userName(),
+        email: faker.internet.email(),
+      };
+
+      userRepository.findOne.returns(undefined);
+
+      await expect(service.delete(1)).rejects.toThrow("User not found");
+      sinon.assert.calledWith(userRepository.findOne, { where: { id: 1 } });
+    });
+  });
 });

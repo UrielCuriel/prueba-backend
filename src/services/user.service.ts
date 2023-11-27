@@ -44,6 +44,46 @@ export class UserService {
     }
   }
 
+  async update(
+    id: number,
+    userData: DeepPartial<User>
+  ): Promise<DeepPartial<User> | undefined> {
+    try {
+      const user = await this.userRepository.findOne({ where: { id } });
+      if (!user) {
+        throw new Error("User not found");
+      }
+      const updatedUser = await this.userRepository.save({
+        ...user,
+        ...userData,
+      });
+      return updatedUser;
+    } catch (error) {
+      if ((error as any).message === "User not found") {
+        throw new Error("User not found");
+      }
+      console.log(error);
+      throw new Error("Something went wrong");
+    }
+  }
+
+  async delete(id: number): Promise<DeepPartial<User> | undefined> {
+    try {
+      const user = await this.userRepository.findOne({ where: { id } });
+      if (!user) {
+        throw new Error("User not found");
+      }
+      const deletedUser = await this.userRepository.remove(user);
+      return deletedUser;
+    } catch (error) {
+      if ((error as any).message === "User not found") {
+        throw new Error("User not found");
+      }
+      console.log(error);
+      throw new Error("Something went wrong");
+    }
+  }
+
   async findAll(
     options?: FindOneOptions<User>
   ): Promise<DeepPartial<User>[] | undefined> {
