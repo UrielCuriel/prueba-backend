@@ -2,6 +2,10 @@ import { AuthService } from "../services/auth.service";
 import express from "express";
 /**
  * Represents the AuthRouter class responsible for handling authentication routes.
+ * @swagger
+ * tags:
+ *   name: Authentication
+ *   description: User authentication
  */
 export class AuthRouter {
   private router: express.Router;
@@ -21,6 +25,38 @@ export class AuthRouter {
    * Handles the login route.
    * @param req - The Express request object.
    * @param res - The Express response object.
+   * @swagger
+   * /auth/login:
+   *   post:
+   *     summary: Login a user
+   *     tags: [Authentication]
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             properties:
+   *               email:
+   *                 type: string
+   *                 description: The user's email
+   *                 example: user@example.com
+   *               password:
+   *                 type: string
+   *                 description: The user's password
+   *                 example: password123
+   *     responses:
+   *       200:
+   *         description: The logged in user
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 token:
+   *                   type: string
+   *                   description: The JWT for the logged in user
+   *                   example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
    */
   private async login(req: express.Request, res: express.Response) {
     try {

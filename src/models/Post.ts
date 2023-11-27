@@ -1,16 +1,8 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  ManyToOne,
-  OneToMany,
-  CreateDateColumn,
-  UpdateDateColumn,
-  BeforeInsert,
-} from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, CreateDateColumn, UpdateDateColumn, BeforeInsert, BeforeUpdate } from "typeorm";
 import { User } from "./User";
 import { Comment } from "./Comment";
 import { Model } from "./base";
+import { IsNotEmpty, IsString } from "class-validator";
 
 @Entity()
 export class Post extends Model<Post> {
@@ -18,12 +10,19 @@ export class Post extends Model<Post> {
   id!: number;
 
   @Column()
+  @IsString()
+  @IsNotEmpty()
   title!: string;
 
-  @Column()
+  @Column({
+    unique: true,
+    default: "",
+  })
   slug!: string;
 
   @Column()
+  @IsString()
+  @IsNotEmpty()
   content!: string;
 
   @CreateDateColumn()
@@ -39,6 +38,7 @@ export class Post extends Model<Post> {
   comments!: Comment[];
 
   @BeforeInsert()
+  @BeforeUpdate()
   createSlug() {
     this.slug = this.title
       .toLowerCase()

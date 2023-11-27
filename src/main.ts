@@ -8,12 +8,19 @@ import { serverConfig } from "./utils/config";
 import { DeepPartial } from "typeorm";
 import { AuthRouter } from "./routes/auth.router";
 import { PostRouter } from "./routes/posts.router";
+import swaggerJsDoc from "swagger-jsdoc";
+import swaggerUi from "swagger-ui-express";
+import { swaggerOptions } from "./utils/swagger";
 
 const app = express();
 
 // middlewares
 app.use(helmet());
 app.use(json());
+
+//swagger
+const specs = swaggerJsDoc(swaggerOptions);
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
 
 //session
 declare module "express-session" {
